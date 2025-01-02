@@ -2,14 +2,7 @@
 // components/AddCake/AddCakeContainer.tsx
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  addDoc,
-  collection,
-  getFirestore,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase"; // Import your firestore configuration
 
 type CakeFormData = {
@@ -58,7 +51,7 @@ const AddCakeContainer = () => {
       reset(); // Reset form after successful submission
       alert("Cake added successfully!");
     } catch (error) {
-      setErrorMessage("Error adding cake. Please try again.");
+      setErrorMessage("Error adding cake. Please try again. " + error);
     }
     setIsLoading(false);
   };

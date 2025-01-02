@@ -6,13 +6,13 @@ import { collection, getDocs } from "firebase/firestore";
 import CakeList from "./CakeList"; // Presentation component
 
 const CakeListContainer = () => {
-  const [cakes, setCakes] = useState<any[]>([]);
+  const [cakes, setCakes] = useState<unknown[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCakes = async () => {
       const querySnapshot = await getDocs(collection(db, "cakes"));
-      const cakeData: any[] = [];
+      const cakeData: unknown[] = [];
       querySnapshot.forEach((doc) => {
         cakeData.push({ id: doc.id, ...doc.data() });
       });

@@ -19,7 +19,7 @@ const MarkSoldContainer = ({ selectedCakes, closeModal }) => {
 
     try {
       // Loop over selected cakes and update them
-      for (let cakeId of selectedCakes) {
+      for (const cakeId of selectedCakes) {
         const cakeRef = doc(db, "cakes", cakeId);
         await updateDoc(cakeRef, {
           status: "Sold",
