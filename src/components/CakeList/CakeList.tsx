@@ -4,9 +4,16 @@ import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import MarkSoldContainer from "@/components/Sales/MarkSoldContainer"; // Import container
 
+interface Cake {
+  id: string;
+  name: string;
+  price: number;
+  weight: number;
+  status: string;
+}
 const CakeList = () => {
-  const [cakes, setCakes] = useState([]);
-  const [selectedCakes, setSelectedCakes] = useState([]);
+  const [cakes, setCakes] = useState<Cake[]>([]);
+  const [selectedCakes, setSelectedCakes] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -15,14 +22,17 @@ const CakeList = () => {
       const cakesData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
+      })) as Cake[];
       setCakes(cakesData);
     };
 
     fetchCakes();
   }, []);
 
-  const handleCheckboxChange = (e, cakeId) => {
+  const handleCheckboxChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    cakeId: string
+  ) => {
     if (e.target.checked) {
       setSelectedCakes((prevSelected) => [...prevSelected, cakeId]);
     } else {
