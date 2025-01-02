@@ -22,9 +22,9 @@ const CakeListContainer = () => {
   useEffect(() => {
     const fetchCakes = async () => {
       const querySnapshot = await getDocs(collection(db, "cakes"));
-      const cakeData: unknown[] = [];
+      const cakeData: Cake[] = [];
       querySnapshot.forEach((doc) => {
-        cakeData.push({ id: doc.id, ...doc.data() });
+        cakeData.push({ id: doc.id, ...doc.data() } as Cake);
       });
       setCakes(cakeData);
       setIsLoading(false);
