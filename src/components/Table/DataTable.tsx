@@ -66,9 +66,14 @@ export function DataTable<TData, TValue>({
           <input
             type="text"
             value={columnFilters[0]?.value || ""}
-            onChange={(e) =>
-              setColumnFilters([{ id: "name", value: e.target.value }])
-            }
+            onChange={(e) => {
+              setColumnFilters([
+                {
+                  id: "name", // Adjust the id if needed based on your data
+                  value: e.target.value,
+                },
+              ]);
+            }}
             placeholder="Filter by Name"
             className="border p-2"
           />
