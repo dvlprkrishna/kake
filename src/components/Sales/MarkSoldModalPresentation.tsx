@@ -1,7 +1,17 @@
 "use client";
 import React from "react";
 
-const MarkSoldModalPresentation = ({
+// Define prop types
+interface MarkSoldModalPresentationProps {
+  customerName: string;
+  customerPhone: string;
+  handleCustomerNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCustomerPhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: () => void;
+  closeModal: () => void;
+}
+
+const MarkSoldModalPresentation: React.FC<MarkSoldModalPresentationProps> = ({
   customerName,
   customerPhone,
   handleCustomerNameChange,

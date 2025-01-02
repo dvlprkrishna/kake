@@ -4,12 +4,23 @@ import { db } from "@/lib/firebase";
 import { updateDoc, doc } from "firebase/firestore";
 import MarkSoldModalPresentation from "@/components/Sales/MarkSoldModalPresentation"; // Import the presentation component
 
-const MarkSoldContainer = ({ selectedCakes, closeModal }) => {
-  const [customerName, setCustomerName] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
+// Define the prop types
+interface MarkSoldContainerProps {
+  selectedCakes: string[]; // Array of cake IDs
+  closeModal: () => void; // Function to close the modal
+}
 
-  const handleCustomerNameChange = (e) => setCustomerName(e.target.value);
-  const handleCustomerPhoneChange = (e) => setCustomerPhone(e.target.value);
+const MarkSoldContainer: React.FC<MarkSoldContainerProps> = ({
+  selectedCakes,
+  closeModal,
+}) => {
+  const [customerName, setCustomerName] = useState<string>("");
+  const [customerPhone, setCustomerPhone] = useState<string>("");
+
+  const handleCustomerNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setCustomerName(e.target.value);
+  const handleCustomerPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setCustomerPhone(e.target.value);
 
   const handleSubmit = async () => {
     if (!customerName || !customerPhone) {

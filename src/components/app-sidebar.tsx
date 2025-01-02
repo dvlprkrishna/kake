@@ -26,14 +26,17 @@ const data = {
         {
           title: "Add Cake",
           url: "/add-cake",
+          isActive: false,
         },
         {
           title: "Cake List",
           url: "/CakeList",
+          isActive: false,
         },
         {
           title: "Test",
           url: "/test",
+          isActive: false,
         },
       ],
     },
@@ -74,7 +77,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuSub>
                     {item.items.map((item) => (
                       <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
+                        <SidebarMenuSubButton
+                          asChild
+                          isActive={item.isActive || false}
+                        >
                           <a href={item.url}>{item.title}</a>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
