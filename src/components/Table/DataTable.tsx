@@ -53,11 +53,14 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      {/* Basic Toolbar */}
+      {/* Toolbar */}
       <div className="flex justify-between items-center">
         <div>
-          {/* Sorting and Filtering UI could go here */}
-          <button onClick={() => setSorting([{ id: "name", desc: false }])}>
+          {/* Sorting Example */}
+          <button
+            onClick={() => setSorting([{ id: "name", desc: false }])}
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
             Sort by Name
           </button>
         </div>
@@ -66,16 +69,16 @@ export function DataTable<TData, TValue>({
           <input
             type="text"
             value={columnFilters[0]?.value || ""}
-            onChange={(e) => {
+            onChange={(e) =>
               setColumnFilters([
                 {
-                  id: "name", // Adjust the id if needed based on your data
+                  id: "name", // Ensure this matches your column `id`
                   value: e.target.value,
                 },
-              ]);
-            }}
+              ])
+            }
             placeholder="Filter by Name"
-            className="border p-2"
+            className="border p-2 rounded"
           />
         </div>
       </div>
@@ -90,7 +93,7 @@ export function DataTable<TData, TValue>({
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className="px-4 py-2"
+                    className="px-4 py-2 text-left border-b"
                   >
                     {!header.isPlaceholder &&
                       flexRender(
@@ -107,7 +110,9 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className={row.getIsSelected() ? "bg-blue-100" : ""}
+                  className={`${
+                    row.getIsSelected() ? "bg-blue-100" : ""
+                  } hover:bg-gray-50`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-2 border">
@@ -121,7 +126,10 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <tr>
-                <td colSpan={columns.length} className="text-center py-4">
+                <td
+                  colSpan={columns.length}
+                  className="text-center py-4 text-gray-500"
+                >
                   No results.
                 </td>
               </tr>
@@ -132,28 +140,32 @@ export function DataTable<TData, TValue>({
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
-        <div>
+        <div className="space-x-2">
           <button
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
+            className="px-2 py-1 border rounded disabled:opacity-50"
           >
             {"<<"}
           </button>
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            className="px-2 py-1 border rounded disabled:opacity-50"
           >
             {"<"}
           </button>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            className="px-2 py-1 border rounded disabled:opacity-50"
           >
             {">"}
           </button>
           <button
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
+            className="px-2 py-1 border rounded disabled:opacity-50"
           >
             {">>"}
           </button>
