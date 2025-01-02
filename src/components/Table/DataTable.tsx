@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,15 +12,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData, any>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = React.useState<
     Record<string, boolean>
   >({});
@@ -52,30 +49,23 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Toolbar */}
       <div className="flex justify-between items-center">
         <div>
-          {/* Sorting Example */}
           <button
             onClick={() => setSorting([{ id: "name", desc: false }])}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Sort by Name
           </button>
         </div>
         <div>
-          {/* Filtering Example */}
           <input
             type="text"
-            value={columnFilters[0]?.value || ""}
+            value={(columnFilters[0]?.value as string) || ""} // Explicit cast to string
             onChange={(e) =>
-              setColumnFilters([
-                {
-                  id: "name", // Ensure this matches your column `id`
-                  value: e.target.value,
-                },
-              ])
+              setColumnFilters([{ id: "name", value: e.target.value }])
             }
             placeholder="Filter by Name"
             className="border p-2 rounded"
@@ -84,16 +74,15 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
-        <table className="min-w-full table-auto">
+      <div className="overflow-auto border rounded-md">
+        <table className="min-w-full table-auto border-collapse">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    colSpan={header.colSpan}
-                    className="px-4 py-2 text-left border-b"
+                    className="px-4 py-2 text-left border-b bg-gray-100"
                   >
                     {!header.isPlaceholder &&
                       flexRender(
@@ -170,7 +159,6 @@ export function DataTable<TData, TValue>({
             {">>"}
           </button>
         </div>
-
         <div>
           <span>
             Page {table.getState().pagination.pageIndex + 1} of{" "}
