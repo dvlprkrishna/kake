@@ -5,8 +5,18 @@ import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import CakeList from "./CakeList"; // Presentation component
 
+interface Cake {
+  id: string;
+  name: string;
+  price: string;
+  weight: string;
+  sku: string;
+  status: string;
+  type: string;
+}
+
 const CakeListContainer = () => {
-  const [cakes, setCakes] = useState<unknown[]>([]);
+  const [cakes, setCakes] = useState<Cake[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

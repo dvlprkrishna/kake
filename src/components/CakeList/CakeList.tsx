@@ -1,33 +1,25 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import React, { useState } from "react";
 import MarkSoldContainer from "@/components/Sales/MarkSoldContainer"; // Import container
 
-interface Cake {
+type Cake = {
   id: string;
   name: string;
-  price: number;
-  weight: number;
+  price: string;
+  weight: string;
+  sku: string;
   status: string;
-}
-const CakeList = () => {
-  const [cakes, setCakes] = useState<Cake[]>([]);
+  type: string;
+};
+
+type CakeListProps = {
+  cakes: Cake[];
+  isLoading: boolean;
+};
+
+const CakeList = ({ cakes, isLoading }: CakeListProps) => {
   const [selectedCakes, setSelectedCakes] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchCakes = async () => {
-      const querySnapshot = await getDocs(collection(db, "cakes"));
-      const cakesData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Cake[];
-      setCakes(cakesData);
-    };
-
-    fetchCakes();
-  }, []);
 
   const handleCheckboxChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -49,6 +41,10 @@ const CakeList = () => {
     }
     setIsModalOpen(true); // Open the modal to get customer data
   };
+
+  if (isLoading) {
+    return <p>Loading cakes...</p>;
+  }
 
   return (
     <div className="container mx-auto p-4">

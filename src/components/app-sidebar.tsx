@@ -21,6 +21,7 @@ const data = {
     {
       title: "Home",
       url: "/",
+      isActive: true,
       items: [
         {
           title: "Add Cake",
