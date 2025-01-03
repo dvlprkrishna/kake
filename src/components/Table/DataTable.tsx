@@ -13,6 +13,7 @@ import {
 } from "@tanstack/react-table";
 
 interface DataTableProps<TData> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<TData, any>[];
   data: TData[];
 }
