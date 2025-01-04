@@ -2,8 +2,8 @@ import { Button, Input, Textarea, Label } from "shadcn"; // Import components fr
 
 export default function AddCakeForm({ formData, onChange, onSubmit }) {
   return (
-    <div className="max-w-lg mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Add a New Cake</h1>
+    <div className="mx-auto max-w-lg p-4">
+      <h1 className="mb-4 text-2xl font-bold">Add a New Cake</h1>
       <form onSubmit={onSubmit} className="space-y-6">
         {/* SKU Input */}
         <div>
@@ -12,9 +12,9 @@ export default function AddCakeForm({ formData, onChange, onSubmit }) {
             id="sku"
             type="text"
             name="sku"
-            value={formData.sku}
-            onChange={onChange}
-            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={skuID}
+            placeholder={skuID}
+            className="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
@@ -28,7 +28,7 @@ export default function AddCakeForm({ formData, onChange, onSubmit }) {
             name="name"
             value={formData.name}
             onChange={onChange}
-            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
@@ -42,7 +42,7 @@ export default function AddCakeForm({ formData, onChange, onSubmit }) {
             name="type"
             value={formData.type}
             onChange={onChange}
-            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -55,7 +55,7 @@ export default function AddCakeForm({ formData, onChange, onSubmit }) {
             name="weight"
             value={formData.weight}
             onChange={onChange}
-            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -68,7 +68,7 @@ export default function AddCakeForm({ formData, onChange, onSubmit }) {
             name="price"
             value={formData.price}
             onChange={onChange}
-            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
@@ -82,7 +82,7 @@ export default function AddCakeForm({ formData, onChange, onSubmit }) {
             name="expiryDate"
             value={formData.expiryDate}
             onChange={onChange}
-            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
@@ -95,7 +95,7 @@ export default function AddCakeForm({ formData, onChange, onSubmit }) {
             name="description"
             value={formData.description}
             onChange={onChange}
-            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={4}
           />
         </div>
@@ -103,7 +103,7 @@ export default function AddCakeForm({ formData, onChange, onSubmit }) {
         {/* Submit Button */}
         <Button
           type="submit"
-          className="w-full bg-blue-500 text-white rounded-md py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-md bg-blue-500 py-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Add Cake
         </Button>

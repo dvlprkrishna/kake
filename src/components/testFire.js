@@ -42,7 +42,7 @@ const TestFirestore = () => {
   const testFirestore = async () => {
     try {
       const docRef = await addDoc(collection(db, "cakes"), {
-        sku: "kk-" + uuidv4().slice(0, 5), // Generates a unique SKU using UUID
+        sku: "K-" + uuidv4().slice(0, 4).toUpperCase(), // Generates a unique SKU using UUID
         name: generateRandomCakeName(),
         type: "Dessert", // You can add a list of types and randomize them
         price: generateRandomPrice(),
@@ -54,6 +54,7 @@ const TestFirestore = () => {
         updated_at: new Date(),
         expiry_at: generateRandomExpiryDate(),
       });
+      alert(`Document written with ID: ${docRef.id}`);
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
@@ -65,7 +66,7 @@ const TestFirestore = () => {
       <h1>Test Firestore with Unique Mock Data</h1>
       <button
         onClick={testFirestore}
-        className="px-4 py-2 bg-blue-500 text-white rounded"
+        className="rounded bg-blue-500 px-4 py-2 text-white"
       >
         Add Unique Cake Data
       </button>

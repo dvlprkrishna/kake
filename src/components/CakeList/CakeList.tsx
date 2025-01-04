@@ -48,42 +48,45 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-semibold mb-4">Cake List</h1>
+      <h1 className="mb-4 text-3xl font-semibold">Cake List</h1>
 
       {/* Button for marking selected cakes as sold */}
       <button
         onClick={handleMarkAsSold}
-        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 mb-4"
+        className="mb-4 rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
       >
         Mark Selected Cakes as Sold
       </button>
 
       {/* Cake List Table */}
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+      <div className="overflow-x-auto rounded-lg bg-white shadow-md">
         <table className="min-w-full table-auto border-collapse">
           <thead>
             <tr className="bg-gray-100 text-left">
-              <th className="px-4 py-2 border-b">Select</th>
-              <th className="px-4 py-2 border-b">Cake Name</th>
-              <th className="px-4 py-2 border-b">Price</th>
-              <th className="px-4 py-2 border-b">Weight</th>
-              <th className="px-4 py-2 border-b">Status</th>
+              <th className="border-b px-4 py-2">Select</th>
+              <th className="border-b px-4 py-2">Cake Name</th>
+              <th className="border-b px-4 py-2">Price</th>
+              <th className="border-b px-4 py-2">Weight</th>
+              <th className="border-b px-4 py-2">sku</th>
+              <th className="border-b px-4 py-2">Status</th>
             </tr>
           </thead>
           <tbody>
             {cakes.map((cake) => (
               <tr key={cake.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border-b">
+                <td className="border-b px-4 py-2">
                   <input
                     type="checkbox"
                     onChange={(e) => handleCheckboxChange(e, cake.id)}
                     className="form-checkbox"
+                    disabled={cake.status === "Sold"}
                   />
                 </td>
-                <td className="px-4 py-2 border-b">{cake.name}</td>
-                <td className="px-4 py-2 border-b">₹{cake.price}</td>
-                <td className="px-4 py-2 border-b">{cake.weight} g</td>
-                <td className="px-4 py-2 border-b">
+                <td className="border-b px-4 py-2">{cake.name}</td>
+                <td className="border-b px-4 py-2">₹{cake.price}</td>
+                <td className="border-b px-4 py-2">{cake.weight} g</td>
+                <td className="border-b px-4 py-2">{cake.sku}</td>
+                <td className="border-b px-4 py-2">
                   <span
                     className={`inline-block px-2 py-1 text-xs font-medium ${
                       cake.status === "Sold"
