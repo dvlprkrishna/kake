@@ -3,6 +3,7 @@ import React from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid"; // Import UUID to generate unique IDs
+import { toast } from "sonner";
 
 // Helper function to generate random cake name
 const generateRandomCakeName = () => {
@@ -54,7 +55,8 @@ const TestFirestore = () => {
         updated_at: new Date(),
         expiry_at: generateRandomExpiryDate(),
       });
-      alert(`Document written with ID: ${docRef.id}`);
+      toast.success(`Dummy Cake added with ID: ${docRef.id}`);
+
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);

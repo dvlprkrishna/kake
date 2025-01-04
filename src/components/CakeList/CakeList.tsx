@@ -1,7 +1,16 @@
 "use client";
 import React, { useState } from "react";
 import MarkSoldContainer from "@/components/Sales/MarkSoldContainer"; // Import container
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"; // Import shadcn dialog components
+import { toast } from "sonner"; // Import Sonner
 
+// Cake Type
 type Cake = {
   id: string;
   name: string;
@@ -12,6 +21,7 @@ type Cake = {
   type: string;
 };
 
+// CakeList Props
 type CakeListProps = {
   cakes: Cake[];
   isLoading: boolean;
@@ -19,7 +29,8 @@ type CakeListProps = {
 
 const CakeList = ({ cakes, isLoading }: CakeListProps) => {
   const [selectedCakes, setSelectedCakes] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [shouldRefresh, setShouldRefresh] = useState(false);
 
   const handleCheckboxChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -36,10 +47,17 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
 
   const handleMarkAsSold = () => {
     if (selectedCakes.length === 0) {
-      alert("Please select at least one cake.");
+      toast.error("Please select at least one cake.");
       return;
     }
-    setIsModalOpen(true); // Open the modal to get customer data
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    if (shouldRefresh) {
+      window.location.reload();
+    }
   };
 
   if (isLoading) {
@@ -103,13 +121,25 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
         </table>
       </div>
 
-      {/* Modal for Mark Sold */}
-      {isModalOpen && (
-        <MarkSoldContainer
-          selectedCakes={selectedCakes}
-          closeModal={() => setIsModalOpen(false)}
-        />
-      )}
+      {/* Dialog for Mark Sold */}
+      <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mark Cakes as Sold</DialogTitle>
+            <DialogDescription>
+              Enter customer details to mark the selected cakes as sold.
+            </DialogDescription>
+          </DialogHeader>
+          <MarkSoldContainer
+            selectedCakes={selectedCakes}
+            onSoldSuccess={() => {
+              setShouldRefresh(true); // Trigger refresh on success
+              setIsDialogOpen(false); // Close dialog
+            }}
+            closeModal={() => setIsDialogOpen(false)} // Close dialog without refreshing
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

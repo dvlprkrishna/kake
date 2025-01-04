@@ -3,15 +3,18 @@ import React, { useState } from "react";
 import { db } from "@/lib/firebase";
 import { updateDoc, doc } from "firebase/firestore";
 import MarkSoldModalPresentation from "@/components/Sales/MarkSoldModalPresentation"; // Import the presentation component
+import { toast } from "sonner"; // Import Sonner
 
 // Define the prop types
 interface MarkSoldContainerProps {
   selectedCakes: string[]; // Array of cake IDs
   closeModal: () => void; // Function to close the modal
+  onSoldSuccess: () => void;
 }
 
 const MarkSoldContainer: React.FC<MarkSoldContainerProps> = ({
   selectedCakes,
+  onSoldSuccess,
   closeModal,
 }) => {
   const [customerName, setCustomerName] = useState<string>("");
@@ -24,7 +27,7 @@ const MarkSoldContainer: React.FC<MarkSoldContainerProps> = ({
 
   const handleSubmit = async () => {
     if (!customerName || !customerPhone) {
-      alert("Please fill in all the customer details.");
+      toast.error("Please fill in all the customer details.");
       return;
     }
 
@@ -42,9 +45,11 @@ const MarkSoldContainer: React.FC<MarkSoldContainerProps> = ({
         });
       }
 
-      alert("Cakes marked as sold successfully!");
+      toast.success("Cakes marked as sold successfully!");
+      onSoldSuccess();
       closeModal(); // Close the modal after submission
     } catch (error) {
+      toast.error(`Error marking cakes as sold: ${error}`);
       console.error("Error marking cakes as sold: ", error);
     }
   };

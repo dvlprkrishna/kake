@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { Button } from "../ui/button";
 
 // Define prop types
 interface MarkSoldModalPresentationProps {
@@ -22,21 +23,39 @@ const MarkSoldModalPresentation: React.FC<MarkSoldModalPresentationProps> = ({
   return (
     <div className="modal">
       <div className="modal-content">
-        <h2>Enter Customer Details</h2>
-        <input
-          type="text"
-          placeholder="Customer Name"
-          value={customerName}
-          onChange={handleCustomerNameChange}
-        />
-        <input
-          type="text"
-          placeholder="Customer Phone"
-          value={customerPhone}
-          onChange={handleCustomerPhoneChange}
-        />
-        <button onClick={handleSubmit}>Mark as Sold</button>
-        <button onClick={closeModal}>Cancel</button>
+        <h2 className="text-sm font-semibold leading-none tracking-tight text-gray-800">
+          Enter Customer Details
+        </h2>
+        <div className="mb-6 flex items-center gap-4">
+          <label className="block w-full text-sm font-medium text-gray-700">
+            Customer Name
+          </label>
+          <input
+            type="text"
+            placeholder="Ex. Krishna Sahu"
+            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+            value={customerName}
+            onChange={handleCustomerNameChange}
+          />
+        </div>
+        <div className="mb-6 flex items-center gap-4">
+          <label className="block w-full text-sm font-medium text-gray-700">
+            Contact Number
+          </label>
+          <input
+            type="text"
+            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+            placeholder="+91 9820839348"
+            value={customerPhone}
+            onChange={handleCustomerPhoneChange}
+          />
+        </div>
+        <div className="flex justify-center gap-x-4">
+          <Button variant="outline" onClick={closeModal}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit}>Mark as Sold</Button>
+        </div>
       </div>
     </div>
   );

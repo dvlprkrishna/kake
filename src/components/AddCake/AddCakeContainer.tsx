@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid"; // Import uuid for generating unique IDs
 import { useForm } from "react-hook-form";
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase"; // Import your firestore configuration
+import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 type CakeFormData = {
   name: string;
@@ -76,7 +78,7 @@ const AddCakeContainer = () => {
         expiry_at: expiryAt,
       });
       reset(); // Reset form after successful submission
-      alert("Cake added successfully!");
+      toast.success("Cake added successfully!");
       setSkuID("K-" + uuidv4().slice(0, 4).toUpperCase()); // Generate a new SKU for the next entry
     } catch (error) {
       setErrorMessage("Error adding cake. Please try again. " + error);
@@ -124,111 +126,131 @@ const AddCakeContainer = () => {
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Price
-          </label>
-          <input
-            type="number"
-            placeholder="Ex. 1499"
-            {...register("price", {
-              required: "Price is required",
-              min: { value: 1, message: "Price must be greater than 0" },
-            })}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-          />
-          {errors.price && (
-            <p className="mt-1 text-xs text-red-500">{errors.price.message}</p>
-          )}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Price
+            </label>
+            <input
+              type="number"
+              placeholder="Ex. 1499"
+              {...register("price", {
+                required: "Price is required",
+                min: { value: 1, message: "Price must be greater than 0" },
+              })}
+              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+            />
+            {errors.price && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.price.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Weight (gm)
+            </label>
+            <input
+              placeholder="Ex. 1500"
+              type="number"
+              {...register("weight", {
+                required: "Weight is required",
+                min: { value: 0.1, message: "Weight must be greater than 0" },
+              })}
+              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+            />
+            {errors.weight && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.weight.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Type
+            </label>
+            <select
+              {...register("type", { required: "Cake type is required" })}
+              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+            >
+              <option value="Vegetarian">Vegetarian</option>
+              <option value="Eggless">Eggless</option>
+              <option value="Egg">Egg</option>
+            </select>
+            {errors.type && (
+              <p className="mt-1 text-xs text-red-500">{errors.type.message}</p>
+            )}
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Weight (gm)
-          </label>
-          <input
-            placeholder="Ex. 1500"
-            type="number"
-            {...register("weight", {
-              required: "Weight is required",
-              min: { value: 0.1, message: "Weight must be greater than 0" },
-            })}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-          />
-          {errors.weight && (
-            <p className="mt-1 text-xs text-red-500">{errors.weight.message}</p>
-          )}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              SKU
+            </label>
+            <input
+              type="text"
+              {...register("sku", { required: "SKU is required" })}
+              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              value={skuID} // Bind the generated SKU to the input field
+              disabled
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Image URL
+            </label>
+            <input
+              type="url"
+              {...register("image", { required: "Image URL is required" })}
+              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              defaultValue="http://localhost:3000/assets/cake-placeholder.jpg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Expiry Date
+            </label>
+            <input
+              type="date"
+              {...register("expiry_at", {
+                required: "Expiry date is required",
+              })}
+              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              defaultValue={
+                new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+                  .toISOString()
+                  .split("T")[0]
+              } // Default to 3 days from now
+            />
+            {errors.expiry_at && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.expiry_at.message}
+              </p>
+            )}
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Type
-          </label>
-          <select
-            {...register("type", { required: "Cake type is required" })}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+        <div className="mt-6 flex justify-center">
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => reset()}
+            className="mr-4 w-max rounded-md px-4 py-2"
           >
-            <option value="Vegetarian">Vegetarian</option>
-            <option value="Eggless">Eggless</option>
-            <option value="Egg">Egg</option>
-          </select>
-          {errors.type && (
-            <p className="mt-1 text-xs text-red-500">{errors.type.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">SKU</label>
-          <input
-            type="text"
-            {...register("sku", { required: "SKU is required" })}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            value={skuID} // Bind the generated SKU to the input field
-            disabled
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Expiry Date
-          </label>
-          <input
-            type="date"
-            {...register("expiry_at", { required: "Expiry date is required" })}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            defaultValue={
-              new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split("T")[0]
-            } // Default to 3 days from now
-          />
-          {errors.expiry_at && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.expiry_at.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Image URL
-          </label>
-          <input
-            type="url"
-            {...register("image", { required: "Image URL is required" })}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            defaultValue="http://localhost:3000/assets/cake-placeholder.jpg"
-          />
-        </div>
-
-        <div className="mt-6">
-          <button
+            Reset
+          </Button>
+          <Button
+            variant="default"
             type="submit"
             disabled={isLoading}
-            className="w-full rounded-md bg-blue-600 px-4 py-2 text-white disabled:bg-gray-400"
+            className="w-max rounded-md px-8 py-2 text-white disabled:bg-gray-400"
           >
             {isLoading ? "Adding Cake..." : "Add Cake"}
-          </button>
+          </Button>
         </div>
       </form>
     </div>
