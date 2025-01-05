@@ -59,6 +59,9 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [shouldRefresh, setShouldRefresh] = useState(false);
   const [cakesList, setCakesList] = useState<Cake[]>(cakes);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [filteredCakes, setFilteredCakes] = useState<Cake[]>(cakes);
 
   useEffect(() => {
     if (shouldRefresh) {
@@ -77,6 +80,10 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
     })) as Cake[];
 
     setCakesList(fetchedCakes);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value.toLowerCase());
   };
 
   const handleCheckboxChange = (
@@ -106,6 +113,22 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
       window.location.reload();
     }
   };
+
+  // Effect to handle search and filter logic
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredCakes(cakes); // Show all cakes if search query is empty
+    } else {
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      setFilteredCakes(
+        cakes.filter(
+          (cake) =>
+            cake.name.toLowerCase().includes(lowerCaseQuery) ||
+            cake.sku.toLowerCase().includes(lowerCaseQuery)
+        )
+      );
+    }
+  }, [searchQuery, cakes]); // Re-run filter logic when search query or cakes change
 
   // Function to check and update status
   const updateExpiredStatus = async () => {
@@ -261,7 +284,7 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
 
   // Table instance with sorting
   const table = useReactTable({
-    data: cakes,
+    data: filteredCakes,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -291,32 +314,35 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
     <div className="container mx-auto p-4">
       <h2 className="mb-4 text-2xl font-semibold">Cake List</h2>
 
-      {/* Button for marking selected cakes as sold */}
-      <Button onClick={handleMarkAsSold} className="mb-4 px-6 py-2">
-        <BadgeIndianRupee /> Mark as Sold
-      </Button>
+      <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:w-[60%]">
+          {/* Lucide icon */}
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-400" />
+          {/* Search input */}
+          <input
+            type="text"
+            placeholder="Search by Cake Name or Cake ID"
+            className="w-full rounded-lg border border-gray-300 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={searchQuery}
+            onChange={handleSearch} // Handle search input
+          />
+        </div>
 
-      {/* New Button to check and update expired cakes */}
-      <Button
-        onClick={() => window.location.reload()}
-        className="mb-4 ml-4 bg-red-500 px-6 py-2"
-      >
-        <RefreshCw />
-        Refresh Status
-      </Button>
+        <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+          {/* Button for marking selected cakes as sold */}
+          <Button onClick={handleMarkAsSold} className="mb-4 px-6 py-2 sm:mb-0">
+            <BadgeIndianRupee /> Mark as Sold
+          </Button>
 
-      <div className="relative mb-4 w-full">
-        {/* Lucide icon */}
-        <Search className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-400" />
-
-        {/* Search input */}
-        <input
-          type="text"
-          placeholder="Search by Cake Name or Cake ID"
-          className="w-full rounded-lg border border-gray-300 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={"searchQuery"}
-          // onChange={(e) => setSearchQuery(e.target.value)}
-        />
+          {/* New Button to check and update expired cakes */}
+          <Button
+            onClick={() => window.location.reload()}
+            className="mb-4 ml-0 bg-red-500 px-6 py-2 sm:mb-0 sm:ml-4"
+          >
+            <RefreshCw />
+            Refresh Status
+          </Button>
+        </div>
       </div>
 
       {/* Cake List Table */}
