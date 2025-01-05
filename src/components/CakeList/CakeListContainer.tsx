@@ -2,7 +2,7 @@
 // containers/CakeListContainer.tsx
 import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, Timestamp } from "firebase/firestore";
 import CakeList from "./CakeList"; // Presentation component
 
 interface Cake {
@@ -13,6 +13,7 @@ interface Cake {
   sku: string;
   status: string;
   type: string;
+  expiry_at: string | Timestamp;
 }
 
 const CakeListContainer = () => {
