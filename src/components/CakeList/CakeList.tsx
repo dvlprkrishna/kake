@@ -22,6 +22,7 @@ import {
   MoveDown,
   MoveUp,
   RefreshCw,
+  Search,
 } from "lucide-react"; // Import Lucide icons
 import MarkSoldContainer from "@/components/Sales/MarkSoldContainer";
 import {
@@ -303,6 +304,20 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
         <RefreshCw />
         Refresh Status
       </Button>
+
+      <div className="relative mb-4 w-full">
+        {/* Lucide icon */}
+        <Search className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-400" />
+
+        {/* Search input */}
+        <input
+          type="text"
+          placeholder="Search by Cake Name or Cake ID"
+          className="w-full rounded-lg border border-gray-300 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          value={"searchQuery"}
+          // onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
       {/* Cake List Table */}
       <div className="overflow-x-auto rounded-lg bg-white shadow-md">
