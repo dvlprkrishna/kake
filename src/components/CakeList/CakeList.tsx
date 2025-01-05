@@ -9,6 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"; // Import shadcn dialog components
 import { toast } from "sonner"; // Import Sonner
+import { Button } from "../ui/button";
 
 // Cake Type
 type Cake = {
@@ -69,12 +70,9 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
       <h1 className="mb-4 text-3xl font-semibold">Cake List</h1>
 
       {/* Button for marking selected cakes as sold */}
-      <button
-        onClick={handleMarkAsSold}
-        className="mb-4 rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
-      >
-        Mark Selected Cakes as Sold
-      </button>
+      <Button onClick={handleMarkAsSold} className="mb-4 px-6 py-2">
+        Mark as Sold
+      </Button>
 
       {/* Cake List Table */}
       <div className="overflow-x-auto rounded-lg bg-white shadow-md">
@@ -82,10 +80,10 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
           <thead>
             <tr className="bg-gray-100 text-left">
               <th className="border-b px-4 py-2">Select</th>
+              <th className="border-b px-4 py-2">Id</th>
               <th className="border-b px-4 py-2">Cake Name</th>
               <th className="border-b px-4 py-2">Price</th>
               <th className="border-b px-4 py-2">Weight</th>
-              <th className="border-b px-4 py-2">sku</th>
               <th className="border-b px-4 py-2">Status</th>
             </tr>
           </thead>
@@ -100,10 +98,11 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
                     disabled={cake.status === "Sold"}
                   />
                 </td>
+                <td className="border-b px-4 py-2">{cake.sku}</td>
                 <td className="border-b px-4 py-2">{cake.name}</td>
                 <td className="border-b px-4 py-2">₹{cake.price}</td>
                 <td className="border-b px-4 py-2">{cake.weight} g</td>
-                <td className="border-b px-4 py-2">{cake.sku}</td>
+
                 <td className="border-b px-4 py-2">
                   <span
                     className={`inline-block px-2 py-1 text-xs font-medium ${
