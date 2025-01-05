@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { doc, updateDoc, getDocs, collection } from "firebase/firestore";
@@ -162,37 +164,6 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
       setShouldRefresh(false);
     }
   }, [shouldRefresh]);
-
-  // Function to check and update expired cakes
-  const checkAndUpdateExpiredCakes = async () => {
-    const currentDate = new Date();
-    let expiredCount = 0;
-
-    // Loop through cakesList and check expiry
-    for (const cake of cakesList) {
-      const expiryAt =
-        cake.expiry_at instanceof Timestamp ? cake.expiry_at.toDate() : null;
-
-      if (expiryAt && expiryAt < currentDate && cake.status !== "Expired") {
-        const cakeRef = doc(db, "cakes", cake.id); // Firestore reference
-        try {
-          await updateDoc(cakeRef, {
-            status: "Expired",
-          });
-          expiredCount++;
-        } catch (error) {
-          toast.error(`Error updating cake ${cake.name} status. ${error}`);
-        }
-      }
-    }
-
-    if (expiredCount > 0) {
-      toast.success(`${expiredCount} cakes' status updated to Expired.`);
-      setShouldRefresh(true); // Trigger re-render after updating cakes
-    } else {
-      toast.info("No expired cakes found.");
-    }
-  };
 
   // Define columns with sorting enabled
   const columns: ColumnDef<Cake>[] = [
