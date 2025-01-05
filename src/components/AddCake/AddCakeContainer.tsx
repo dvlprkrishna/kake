@@ -6,7 +6,7 @@ import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase"; // Import your firestore configuration
 import { toast } from "sonner";
 import { Button } from "../ui/button";
-import { CircleX, ListRestart, TicketPlus } from "lucide-react";
+import { CircleX, TicketPlus } from "lucide-react";
 
 type CakeFormData = {
   name: string;

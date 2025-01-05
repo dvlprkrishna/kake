@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CakeSlice, GalleryVerticalEnd } from "lucide-react";
+import { CakeSlice } from "lucide-react";
 
 import {
   Sidebar,

@@ -19,8 +19,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader,
-  MoveDown,
-  MoveUp,
   RefreshCw,
   Search,
 } from "lucide-react"; // Import Lucide icons
@@ -35,7 +33,6 @@ import {
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Timestamp } from "firebase/firestore";
-import Image from "next/image";
 
 // Cake Type
 type Cake = {
