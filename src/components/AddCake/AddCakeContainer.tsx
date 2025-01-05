@@ -6,6 +6,7 @@ import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase"; // Import your firestore configuration
 import { toast } from "sonner";
 import { Button } from "../ui/button";
+import { CircleX, ListRestart, TicketPlus } from "lucide-react";
 
 type CakeFormData = {
   name: string;
@@ -245,7 +246,7 @@ const AddCakeContainer = () => {
               onClick={() => reset()}
               className="mr-4 w-max rounded-md px-4 py-2"
             >
-              Reset
+              <CircleX /> Reset
             </Button>
             <Button
               variant="default"
@@ -253,7 +254,13 @@ const AddCakeContainer = () => {
               disabled={isLoading}
               className="w-max rounded-md px-8 py-2 text-white disabled:bg-gray-400"
             >
-              {isLoading ? "Adding Cake..." : "Add Cake"}
+              {isLoading ? (
+                "Adding Cake..."
+              ) : (
+                <>
+                  <TicketPlus /> Add Cake
+                </>
+              )}
             </Button>
           </div>
         </form>

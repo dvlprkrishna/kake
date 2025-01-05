@@ -4,6 +4,7 @@ import { db } from "@/lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid"; // Import UUID to generate unique IDs
 import { toast } from "sonner";
+import { Button } from "./ui/button";
 
 // Helper function to generate random cake name
 const generateRandomCakeName = () => {
@@ -64,14 +65,11 @@ const TestFirestore = () => {
   };
 
   return (
-    <div>
-      <h1>Test Firestore with Unique Mock Data</h1>
-      <button
-        onClick={testFirestore}
-        className="rounded bg-blue-500 px-4 py-2 text-white"
-      >
-        Add Unique Cake Data
-      </button>
+    <div className="container mx-auto p-4">
+      <h2 className="mb-4 text-2xl font-semibold">Insert Dummy Cake Data</h2>
+      <Button onClick={testFirestore} className="rounded px-4 py-2">
+        Add Dummy Cake Data
+      </Button>
     </div>
   );
 };

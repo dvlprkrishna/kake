@@ -1,5 +1,9 @@
 "use client";
-import React, { useState } from "react";
+
+import { doc, updateDoc, getDocs, collection } from "firebase/firestore";
+import { db } from "@/lib/firebase"; // Replace with your actual Firebase config import
+
+import React, { useEffect, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -7,7 +11,18 @@ import {
   getSortedRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
-import { MoveDown, MoveUp } from "lucide-react"; // Import Lucide icons
+import {
+  ArrowDownZA,
+  ArrowUpAZ,
+  ArrowUpDown,
+  BadgeIndianRupee,
+  ChevronLeft,
+  ChevronRight,
+  Loader,
+  MoveDown,
+  MoveUp,
+  RefreshCw,
+} from "lucide-react"; // Import Lucide icons
 import MarkSoldContainer from "@/components/Sales/MarkSoldContainer";
 import {
   Dialog,
@@ -19,6 +34,7 @@ import {
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Timestamp } from "firebase/firestore";
+import Image from "next/image";
 
 // Cake Type
 type Cake = {
@@ -41,6 +57,26 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
   const [selectedCakes, setSelectedCakes] = useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [shouldRefresh, setShouldRefresh] = useState(false);
+  const [cakesList, setCakesList] = useState<Cake[]>(cakes);
+
+  useEffect(() => {
+    if (shouldRefresh) {
+      // Fetch the updated list of cakes
+      fetchCakes();
+      setShouldRefresh(false);
+    }
+  }, [shouldRefresh]);
+
+  const fetchCakes = async () => {
+    const cakesRef = collection(db, "cakes");
+    const snapshot = await getDocs(cakesRef);
+    const fetchedCakes = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Cake[];
+
+    setCakesList(fetchedCakes);
+  };
 
   const handleCheckboxChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -70,6 +106,73 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
     }
   };
 
+  // Function to check and update status
+  const updateExpiredStatus = async () => {
+    const currentDate = new Date();
+
+    // Loop through cakes and check expiry
+    for (const cake of cakes) {
+      const expiryAt =
+        cake.expiry_at instanceof Timestamp ? cake.expiry_at.toDate() : null;
+
+      if (expiryAt && expiryAt < currentDate && cake.status !== "Expired") {
+        // If the expiry date has passed, update the status to "Expired"
+        const cakeRef = doc(db, "cakes", cake.id);
+        await updateDoc(cakeRef, {
+          status: "Expired",
+        });
+
+        toast.success(`Cake ${cake.name} status updated to Expired.`);
+        window.location.reload();
+      }
+    }
+  };
+
+  // Run the update when cakes are loaded
+  useEffect(() => {
+    if (!isLoading) {
+      updateExpiredStatus();
+    }
+  }, [cakes, isLoading]);
+
+  useEffect(() => {
+    if (shouldRefresh) {
+      fetchCakes();
+      setShouldRefresh(false);
+    }
+  }, [shouldRefresh]);
+
+  // Function to check and update expired cakes
+  const checkAndUpdateExpiredCakes = async () => {
+    const currentDate = new Date();
+    let expiredCount = 0;
+
+    // Loop through cakesList and check expiry
+    for (const cake of cakesList) {
+      const expiryAt =
+        cake.expiry_at instanceof Timestamp ? cake.expiry_at.toDate() : null;
+
+      if (expiryAt && expiryAt < currentDate && cake.status !== "Expired") {
+        const cakeRef = doc(db, "cakes", cake.id); // Firestore reference
+        try {
+          await updateDoc(cakeRef, {
+            status: "Expired",
+          });
+          expiredCount++;
+        } catch (error) {
+          toast.error(`Error updating cake ${cake.name} status. ${error}`);
+        }
+      }
+    }
+
+    if (expiredCount > 0) {
+      toast.success(`${expiredCount} cakes' status updated to Expired.`);
+      setShouldRefresh(true); // Trigger re-render after updating cakes
+    } else {
+      toast.info("No expired cakes found.");
+    }
+  };
+
   // Define columns with sorting enabled
   const columns: ColumnDef<Cake>[] = [
     {
@@ -80,7 +183,9 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
           type="checkbox"
           onChange={(e) => handleCheckboxChange(e, row.original.id)}
           className="form-checkbox"
-          disabled={row.original.status === "Sold"}
+          disabled={
+            row.original.status === "Sold" || row.original.status === "Expired"
+          }
         />
       ),
       enableSorting: false, // Disable sorting for the checkbox column
@@ -107,6 +212,8 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
             className={`inline-block px-2 py-1 text-xs font-medium ${
               status === "Sold"
                 ? "bg-green-100 text-green-600"
+                : status === "Expired"
+                ? "bg-red-100 text-red-600"
                 : "bg-yellow-100 text-yellow-600"
             }`}
           >
@@ -165,7 +272,18 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
   });
 
   if (isLoading) {
-    return <p>Loading cakes...</p>;
+    return (
+      <div className="flex h-96 w-full flex-col items-center justify-center gap-4">
+        {/* <Image
+          width="250"
+          height="150"
+          src="/assets/cake-placeholder.jpg"
+          alt="placeholder"
+        /> */}
+        <Loader size={64} />
+        <p>Loading cakes...</p>
+      </div>
+    );
   }
 
   return (
@@ -174,7 +292,16 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
 
       {/* Button for marking selected cakes as sold */}
       <Button onClick={handleMarkAsSold} className="mb-4 px-6 py-2">
-        Mark as Sold
+        <BadgeIndianRupee /> Mark as Sold
+      </Button>
+
+      {/* New Button to check and update expired cakes */}
+      <Button
+        onClick={() => window.location.reload()}
+        className="mb-4 ml-4 bg-red-500 px-6 py-2"
+      >
+        <RefreshCw />
+        Refresh Status
       </Button>
 
       {/* Cake List Table */}
@@ -197,13 +324,13 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
                         : header.column.columnDef.header}
                       {/* Sort Indicator */}
                       {header.column.getIsSorted() === "asc" && (
-                        <MoveUp size={16} className="text-black" />
+                        <ArrowUpAZ size={16} className="text-black" />
                       )}
                       {header.column.getIsSorted() === "desc" && (
-                        <MoveDown size={16} className="text-black" />
+                        <ArrowDownZA size={16} className="text-black" />
                       )}
                       {!header.column.getIsSorted() && (
-                        <MoveUp size={16} className="text-gray-400" />
+                        <ArrowUpDown size={16} className="text-gray-400" />
                       )}
                     </div>
                   </th>
@@ -229,6 +356,9 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
                       ? {
                           background:
                             "repeating-linear-gradient(45deg, #f8c8d1, #f8c8d1 10px, #f2a0c3 10px, #f2a0c3 20px)",
+                          backgroundImage:
+                            "linear-gradient(45deg, #ffffff 25%, #fff2f2  25%, #fff2f2  50%, #ffffff 50%, #ffffff 75%, #fff2f2  75%, #fff2f2  100%)",
+                          backgroundSize: "56.57px 56.57px",
                         }
                       : {}
                   }
@@ -253,8 +383,9 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
         <Button
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
+          className="pl-2"
         >
-          Previous
+          <ChevronLeft /> Previous
         </Button>
         <span>
           Page {table.getState().pagination.pageIndex + 1} of{" "}
@@ -263,8 +394,9 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
         <Button
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
+          className="pr-2"
         >
-          Next
+          Next <ChevronRight />
         </Button>
       </div>
 
