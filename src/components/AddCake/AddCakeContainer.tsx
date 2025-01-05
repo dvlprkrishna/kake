@@ -87,172 +87,177 @@ const AddCakeContainer = () => {
   };
 
   return (
-    <div className="mx-auto w-full max-w-full rounded-lg bg-white p-6 shadow-md">
+    <div className="container mx-auto p-4">
       <h2 className="mb-4 text-2xl font-semibold">Add New Cake</h2>
+      <div className="mx-auto w-full max-w-full rounded-lg border bg-white p-6">
+        {errorMessage && (
+          <div className="mb-4 text-red-500">{errorMessage}</div>
+        )}
 
-      {errorMessage && <div className="mb-4 text-red-500">{errorMessage}</div>}
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Cake Name
-          </label>
-          <input
-            type="text"
-            placeholder="Ex. Dutch Truffle"
-            {...register("name", { required: "Cake name is required" })}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-          />
-          {errors.name && (
-            <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Description
-          </label>
-          <textarea
-            placeholder="Ex. A delicious chocolate cake"
-            {...register("description", {
-              required: "Description is required",
-            })}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-          />
-          {errors.description && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.description.message}
-            </p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Price
-            </label>
-            <input
-              type="number"
-              placeholder="Ex. 1499"
-              {...register("price", {
-                required: "Price is required",
-                min: { value: 1, message: "Price must be greater than 0" },
-              })}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            />
-            {errors.price && (
-              <p className="mt-1 text-xs text-red-500">
-                {errors.price.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Weight (gm)
-            </label>
-            <input
-              placeholder="Ex. 1500"
-              type="number"
-              {...register("weight", {
-                required: "Weight is required",
-                min: { value: 0.1, message: "Weight must be greater than 0" },
-              })}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            />
-            {errors.weight && (
-              <p className="mt-1 text-xs text-red-500">
-                {errors.weight.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Type
-            </label>
-            <select
-              {...register("type", { required: "Cake type is required" })}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            >
-              <option value="Vegetarian">Vegetarian</option>
-              <option value="Eggless">Eggless</option>
-              <option value="Egg">Egg</option>
-            </select>
-            {errors.type && (
-              <p className="mt-1 text-xs text-red-500">{errors.type.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              SKU
+              Cake Name
             </label>
             <input
               type="text"
-              {...register("sku", { required: "SKU is required" })}
+              placeholder="Ex. Dutch Truffle"
+              {...register("name", { required: "Cake name is required" })}
               className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-              value={skuID} // Bind the generated SKU to the input field
-              disabled
             />
+            {errors.name && (
+              <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Image URL
+              Description
             </label>
-            <input
-              type="url"
-              {...register("image", { required: "Image URL is required" })}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-              defaultValue="http://localhost:3000/assets/cake-placeholder.jpg"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Expiry Date
-            </label>
-            <input
-              type="date"
-              {...register("expiry_at", {
-                required: "Expiry date is required",
+            <textarea
+              placeholder="Ex. A delicious chocolate cake"
+              {...register("description", {
+                required: "Description is required",
               })}
               className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-              defaultValue={
-                new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
-                  .toISOString()
-                  .split("T")[0]
-              } // Default to 3 days from now
             />
-            {errors.expiry_at && (
+            {errors.description && (
               <p className="mt-1 text-xs text-red-500">
-                {errors.expiry_at.message}
+                {errors.description.message}
               </p>
             )}
           </div>
-        </div>
 
-        <div className="mt-6 flex justify-center">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => reset()}
-            className="mr-4 w-max rounded-md px-4 py-2"
-          >
-            Reset
-          </Button>
-          <Button
-            variant="default"
-            type="submit"
-            disabled={isLoading}
-            className="w-max rounded-md px-8 py-2 text-white disabled:bg-gray-400"
-          >
-            {isLoading ? "Adding Cake..." : "Add Cake"}
-          </Button>
-        </div>
-      </form>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Price
+              </label>
+              <input
+                type="number"
+                placeholder="Ex. 1499"
+                {...register("price", {
+                  required: "Price is required",
+                  min: { value: 1, message: "Price must be greater than 0" },
+                })}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              />
+              {errors.price && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.price.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Weight (gm)
+              </label>
+              <input
+                placeholder="Ex. 1500"
+                type="number"
+                {...register("weight", {
+                  required: "Weight is required",
+                  min: { value: 0.1, message: "Weight must be greater than 0" },
+                })}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              />
+              {errors.weight && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.weight.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Type
+              </label>
+              <select
+                {...register("type", { required: "Cake type is required" })}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+              >
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Eggless">Eggless</option>
+                <option value="Egg">Egg</option>
+              </select>
+              {errors.type && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.type.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                SKU
+              </label>
+              <input
+                type="text"
+                {...register("sku", { required: "SKU is required" })}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                value={skuID} // Bind the generated SKU to the input field
+                disabled
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Image URL
+              </label>
+              <input
+                type="url"
+                {...register("image", { required: "Image URL is required" })}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                defaultValue="http://localhost:3000/assets/cake-placeholder.jpg"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Expiry Date
+              </label>
+              <input
+                type="date"
+                {...register("expiry_at", {
+                  required: "Expiry date is required",
+                })}
+                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                defaultValue={
+                  new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+                    .toISOString()
+                    .split("T")[0]
+                } // Default to 3 days from now
+              />
+              {errors.expiry_at && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.expiry_at.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => reset()}
+              className="mr-4 w-max rounded-md px-4 py-2"
+            >
+              Reset
+            </Button>
+            <Button
+              variant="default"
+              type="submit"
+              disabled={isLoading}
+              className="w-max rounded-md px-8 py-2 text-white disabled:bg-gray-400"
+            >
+              {isLoading ? "Adding Cake..." : "Add Cake"}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
