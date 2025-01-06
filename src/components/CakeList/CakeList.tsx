@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 import { doc, updateDoc, getDocs, collection } from "firebase/firestore";
 import { db } from "@/lib/firebase"; // Replace with your actual Firebase config import
@@ -86,6 +88,62 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
     })) as Cake[];
 
     setCakesList(fetchedCakes);
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+
+    doc.text("Cake List", 14, 10);
+
+    const tableRows = filteredCakes.map((cake) => [
+      cake.sku,
+      cake.name,
+      `₹${cake.price}`,
+      `${cake.weight} g`,
+      cake.status,
+      cake.expiry_at instanceof Timestamp
+        ? cake.expiry_at.toDate().toLocaleDateString()
+        : cake.expiry_at,
+    ]);
+
+    doc.autoTable({
+      head: [["Id", "Name", "Price", "Weight", "Status", "Expiry Date"]],
+      body: tableRows,
+    });
+
+    doc.save("cakes.pdf");
+  };
+
+  const exportToCSV = () => {
+    const csvHeaders = [
+      "Id",
+      "Name",
+      "Price",
+      "Weight",
+      "Status",
+      "Expiry Date",
+    ];
+    const csvRows = filteredCakes.map((cake) => [
+      cake.sku,
+      cake.name,
+      cake.price.toString().replace("₹", ""), // Remove ₹ for simplicity
+      `${cake.weight} g`,
+      cake.status,
+      cake.expiry_at instanceof Timestamp
+        ? cake.expiry_at.toDate().toLocaleDateString()
+        : cake.expiry_at,
+    ]);
+
+    const csvContent = [
+      csvHeaders.join(","), // Add headers
+      ...csvRows.map((row) => row.join(",")), // Add rows
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "cakes.csv";
+    link.click();
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -332,7 +390,7 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
       {/* Toggle columns */}
       <div className="mb-4 flex flex-row gap-2 sm:flex-row sm:items-center sm:justify-center">
         <h3 className="font-semibold">Toggle Columns:</h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 overflow-hidden">
           {table.getAllLeafColumns().map((column, index) => {
             return (
               <label key={column.id} className="flex items-center gap-2">
@@ -380,6 +438,15 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
             Refresh Status
           </Button>
         </div>
+      </div>
+
+      <div className="mb-4 flex flex-row gap-4">
+        <Button onClick={exportToCSV} className="px-4 py-2">
+          Export to CSV
+        </Button>
+        <Button onClick={exportToPDF} className="px-4 py-2">
+          Export to PDF
+        </Button>
       </div>
 
       {/* Cake List Table */}
