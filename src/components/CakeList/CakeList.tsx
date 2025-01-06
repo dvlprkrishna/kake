@@ -45,6 +45,11 @@ type Cake = {
   sku: string;
   status: string;
   expiry_at: Timestamp | string; // Add expiry date field
+  customer?: {
+    name: string;
+    phone: string;
+    sold_at?: Timestamp | string; // Sold date and time
+  }; // Nested customer object
 };
 
 // CakeList Props
@@ -171,7 +176,7 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
   const columns: ColumnDef<Cake>[] = [
     {
       id: "select",
-      header: () => <></>, // Empty header for the checkbox column
+      header: () => <span>Select</span>, // Render JSX directly
       cell: ({ row }) => (
         <input
           type="checkbox"
@@ -184,7 +189,7 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
       ),
       enableSorting: false, // Disable sorting for the checkbox column
     },
-    { accessorKey: "sku", header: "Id" },
+    { accessorKey: "sku", header: "SKU Id" },
     { accessorKey: "name", header: "Cake Name" },
     {
       accessorKey: "price",
@@ -250,6 +255,42 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
         );
       },
     },
+    {
+      accessorKey: "customer.name",
+      header: "Customer Name",
+      cell: ({ row }) => row.original.customer?.name || "N/A", // Safely access nested name
+    },
+    {
+      accessorKey: "customer.sold_at",
+      header: "Sales Date",
+      cell: ({ row }) => {
+        const soldAt = row.original.customer?.sold_at || "N/A";
+        if (soldAt instanceof Timestamp) {
+          const date = soldAt.toDate();
+          const day = String(date.getDate()).padStart(2, "0");
+          const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+          const year = date.getFullYear();
+          return `${day}-${month}-${year}`;
+        }
+        return "N/A";
+      },
+    },
+    {
+      accessorKey: "customer.sold_at",
+      header: "Sales Time",
+      cell: ({ row }) => {
+        const soldAt = row.original.customer?.sold_at || "N/A";
+        if (soldAt instanceof Timestamp) {
+          const date = soldAt.toDate();
+          let hours = date.getHours();
+          const minutes = String(date.getMinutes()).padStart(2, "0");
+          const ampm = hours >= 12 ? "PM" : "AM";
+          hours = hours % 12 || 12; // Convert to 12-hour format
+          return `${hours}:${minutes} ${ampm}`;
+        }
+        return "N/A";
+      },
+    },
   ];
 
   // Table instance with sorting
@@ -302,11 +343,7 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
                     column.toggleVisibility(!column.getIsVisible())
                   }
                 />
-                <span>
-                  {typeof column.columnDef.header === "function"
-                    ? column.columnDef.header({}) // Pass an empty object or appropriate context if needed
-                    : column.columnDef.header || column.id}
-                </span>
+                <span>{column.id}</span>
               </label>
             );
           })}
@@ -358,9 +395,10 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     <div className="flex items-center gap-2">
+                      {/* Handle header as string, JSX, or function */}
                       {header.isPlaceholder
                         ? null
-                        : header.column.columnDef.header instanceof Function
+                        : typeof header.column.columnDef.header === "function"
                         ? header.column.columnDef.header(header.getContext())
                         : header.column.columnDef.header}
                       {/* Sort Indicator */}
@@ -379,6 +417,7 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
               </tr>
             ))}
           </thead>
+
           <tbody>
             {table.getRowModel().rows.map((row) => {
               // Check if the expiry date is past
