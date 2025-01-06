@@ -292,16 +292,24 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
       <div className="mb-4 flex flex-row gap-2 sm:flex-row sm:items-center sm:justify-center">
         <h3 className="font-semibold">Toggle Columns:</h3>
         <div className="flex flex-wrap gap-2">
-          {table.getAllLeafColumns().map((column) => (
-            <label key={column.id} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={column.getIsVisible()}
-                onChange={() => column.toggleVisibility(!column.getIsVisible())}
-              />
-              {column.columnDef.header}
-            </label>
-          ))}
+          {table.getAllLeafColumns().map((column, index) => {
+            return (
+              <label key={column.id} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={index !== 0 ? column.getIsVisible() : false}
+                  onChange={() =>
+                    column.toggleVisibility(!column.getIsVisible())
+                  }
+                />
+                <span>
+                  {typeof column.columnDef.header === "function"
+                    ? column.columnDef.header({}) // Pass an empty object or appropriate context if needed
+                    : column.columnDef.header || column.id}
+                </span>
+              </label>
+            );
+          })}
         </div>
       </div>
 
