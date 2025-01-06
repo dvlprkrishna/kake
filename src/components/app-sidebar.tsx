@@ -34,8 +34,13 @@ const data = {
           isActive: false,
         },
         {
-          title: "Test",
+          title: "Add Dummy Cake Data",
           url: "/test",
+          isActive: false,
+        },
+        {
+          title: "Sales List",
+          url: "/SalesList",
           isActive: false,
         },
       ],
