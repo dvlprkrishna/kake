@@ -60,6 +60,8 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
   const [cakesList, setCakesList] = useState<Cake[]>(cakes);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [columnVisibility, setColumnVisibility] = useState({});
+
   const [filteredCakes, setFilteredCakes] = useState<Cake[]>(cakes);
 
   useEffect(() => {
@@ -254,6 +256,10 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
   const table = useReactTable({
     data: filteredCakes,
     columns,
+    state: {
+      columnVisibility, // Pass visibility state
+    },
+    onColumnVisibilityChange: setColumnVisibility, // Update visibility state
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(), // Enable sorting
@@ -280,8 +286,26 @@ const CakeList = ({ cakes, isLoading }: CakeListProps) => {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="mb-4 text-2xl font-semibold">Cake List</h2>
+      <h2 className="mb-4 text-2xl font-semibold">All Cake List</h2>
 
+      {/* Toggle columns */}
+      <div className="mb-4 flex flex-row gap-2 sm:flex-row sm:items-center sm:justify-center">
+        <h3 className="font-semibold">Toggle Columns:</h3>
+        <div className="flex flex-wrap gap-2">
+          {table.getAllLeafColumns().map((column) => (
+            <label key={column.id} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={column.getIsVisible()}
+                onChange={() => column.toggleVisibility(!column.getIsVisible())}
+              />
+              {column.columnDef.header}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Search / mark as sale / refresh */}
       <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:w-[60%]">
           {/* Lucide icon */}
